@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: kama-glance-dash-widget\n"
-"POT-Creation-Date: 2024-02-25 00:34+0500\n"
+"POT-Creation-Date: 2024-02-25 01:31+0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: WP-KAMA\n"
@@ -20,70 +20,82 @@ msgstr ""
 "X-Poedit-SearchPath-0: ./src\n"
 "X-Poedit-SearchPathExcluded-0: node_modules\n"
 
-#: src/Data.php:27
+#: src/Data.php:11
+msgid "Content"
+msgstr "Контент"
+
+#: src/Data.php:15
+msgid "Taxonomies"
+msgstr "Таксономии"
+
+#: src/Data.php:19
+msgid "Info"
+msgstr "Инфо"
+
+#: src/Data.php:44
 msgid "draft"
 msgid_plural "drafts"
 msgstr[0] "черновик"
 msgstr[1] "черновика"
 msgstr[2] "черновиков"
 
-#: src/Data.php:33 src/Data.php:53
+#: src/Data.php:50 src/Data.php:70
 msgid "pending"
 msgid_plural "pending"
 msgstr[0] "в ожидании"
 msgstr[1] "в ожидании"
 msgstr[2] "в ожидании"
 
-#: src/Data.php:47
+#: src/Data.php:64
 msgid "Comment"
 msgid_plural "Comments"
 msgstr[0] "Коммент"
 msgstr[1] "Коммента"
 msgstr[2] "Комментов"
 
-#: src/Data.php:73
+#: src/Data.php:91
 msgid "Link Category"
 msgid_plural "Link Categories"
 msgstr[0] "Категория ссылки"
 msgstr[1] "Категории ссылки"
 msgstr[2] "Категорий ссылок"
 
-#: src/Data.php:80
+#: src/Data.php:98
 msgid "Link"
 msgid_plural "Links"
 msgstr[0] "Ссылка"
 msgstr[1] "Ссылки"
 msgstr[2] "Ссылок"
 
-#: src/Data.php:112
+#: src/Data.php:131
 msgid "Plugin"
 msgid_plural "Plugins"
 msgstr[0] "Плагин"
 msgstr[1] "Плагина"
 msgstr[2] "Плагинов"
 
-#: src/Data.php:119
+#: src/Data.php:138
 msgid "inactive"
 msgid_plural "inactive"
 msgstr[0] "неактивный"
 msgstr[1] "неактивных"
 msgstr[2] "неактивных"
 
-#: src/Data.php:128
+#: src/Data.php:147
 msgid "User"
 msgid_plural "Users"
 msgstr[0] "Юзер"
 msgstr[1] "Юзера"
 msgstr[2] "Юзеров"
 
-#: src/Data.php:135
+#: src/Data.php:154
 msgid "Widget"
 msgid_plural "Widgets"
 msgstr[0] "Виджет"
 msgstr[1] "Виджета"
 msgstr[2] "Виджетов"
 
-#: src/Data.php:142
+#: src/Data.php:161
 msgid "Menu"
 msgid_plural "Menus"
 msgstr[0] "Меню"
@@ -93,36 +105,3 @@ msgstr[2] "Меню"
 #: src/Display.php:62
 msgid "Search engine visibility is OFF"
 msgstr "Видимость для поисковиков отключена"
-
-#: src/Display.php:80
-msgid "Content"
-msgstr "Контент"
-
-#: src/Display.php:81
-msgid "Taxonomies"
-msgstr "Таксономии"
-
-#: src/Display.php:82
-msgid "Info"
-msgstr "Инфо"
-
-#~ msgid "Comments"
-#~ msgstr "Комментариев"
-
-#~ msgid "Link Categories"
-#~ msgstr "Категории Ссылки"
-
-#~ msgid "Links"
-#~ msgstr "Ссылки"
-
-#~ msgid "Plugins"
-#~ msgstr "Плагинов"
-
-#~ msgid "Users"
-#~ msgstr "Пользователей"
-
-#~ msgid "Widgets"
-#~ msgstr "Виджетов"
-
-#~ msgid "Menus"
-#~ msgstr "Меню"

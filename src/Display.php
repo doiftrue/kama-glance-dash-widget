@@ -20,9 +20,9 @@ trait Display {
 		do_action( 'kama_glance_dash_widget__before_show_blocks' );
 		?>
 
-		<div id="kgdwidget__block kgdwidget__block-info"><?php $this->echo_block( 'info' ); ?></div>
-		<div id="kgdwidget__block kgdwidget__block-content"><?php $this->echo_block( 'content' ); ?></div>
-		<div id="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_block( 'taxonomies' ); ?></div>
+		<div id="kgdwidget__block kgdwidget__block-info"><?php $this->echo_section( 'info' ); ?></div>
+		<div id="kgdwidget__block kgdwidget__block-content"><?php $this->echo_section( 'content' ); ?></div>
+		<div id="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_section( 'taxonomies' ); ?></div>
 
 		<div id="dashboard_right_now">
 			<?php
@@ -37,7 +37,7 @@ trait Display {
 			if ( $actions ) {
 				?>
 				<div class="sub">
-					<?php echo $actions; ?>
+					<?= $actions // phpcs:ignore ?>
 				</div>
 				<?php
 			}
@@ -60,45 +60,21 @@ trait Display {
 			$title = apply_filters( 'privacy_on_link_title', '' );
 			/** This filter is documented in wp-admin/includes/dashboard.php */
 			$content = apply_filters( 'privacy_on_link_text', __( 'Search engine visibility is OFF', 'kgdw' ) );
-
-			$title_attr = $title ?" title='$title'" : '';
 			?>
 			<p class="search-engines-info">
-				<a href='options-reading.php'<?= $title_attr ?>><?= $content ?></a>
+				<a href='options-reading.php' title="<?= esc_attr( $title ) ?>"><?= esc_html( $content ) ?></a>
 			</p>
 			<?php
 		}
 	}
 
-	private function echo_block( string $block_type ) {
+	private function echo_section( string $section_type ) {
 
-		( 'content' === $block_type )    && $data_array = $this->get_content_data();
-		( 'taxonomies' === $block_type ) && $data_array = $this->get_taxonomies_data();
-		( 'info' === $block_type )       && $data_array = $this->get_info_data();
-
-		$block_titles = [
-			'content'    => __( 'Content', 'kgdw' ),
-			'taxonomies' => __( 'Taxonomies', 'kgdw' ),
-			'info'       => __( 'Info', 'kgdw' ),
-		];
+		list( $section_data, $section_title ) = $this->get_section_data( $section_type );
 
 		$rows_output = [];
-		foreach( $data_array as $args ){
-			$args += [
-				'class'       => '',
-				'cap'         => '',
-				'link'        => '',
-				'amount'      => 0,
-				'amount_text' => '',
-				'extra'       => [],
-			];
-
-			$extra_td = '';
-			if( $args['extra'] ){
-				$extra_td = $this->extra_td( $args['extra'] );
-			}
-
-			$rows_output = $this->row( $args, $rows_output, $extra_td );
+		foreach( $section_data as $row ){
+			$rows_output = $this->row( $row, $rows_output );
 		}
 
 		if( isset( $rows_output[0] ) ){
@@ -110,39 +86,33 @@ trait Display {
 
 		?>
 		<div class="kgdwidget__block-section">
-			<?php
-			echo "<h5>{$block_titles[ $block_type ]}</h5>";
-			?>
+			<h5><?= esc_html( $section_title ) ?></h5>
 			<table>
 				<?php
 				foreach( $rows_output as $row ){
 					echo $row;
 				}
-				do_action( 'kama_glance_dash_widget__table_end', $rows_output, $block_type );
+				do_action( 'kama_glance_dash_widget__table_end', $rows_output, $section_type );
 				?>
 			</table>
 		</div>
 		<?php
 	}
 
-	private function row( $args = [], $rows_output = [], $extra_td = '' ): array {
+	private function row( Section_Row $row, array $rows_output ): array {
 
-		$amount = (int) ( $args['amount'] ?? 0 );
-		$anchor = $args['amount_text'] ?? '';
-		$link   = $args['link'] ?? '';
-		$cap    = $args['cap'] ?? '';
-
-		if( ! current_user_can( $cap ) ){
+		if( ! current_user_can( $row->cap ) ){
 			return [];
 		}
 
-		$rows_index = $amount;
+		$extra_td = $row->extra ? $this->extra_td( $row->extra ) : '';
+		$rows_index = $row->amount;
 		if( $extra_td && ! $rows_index ){
 			$rows_index = uniqid( '', true );
 		}
 
-		if( ! isset( $rows_output[ $amount ] ) ){
-			$rows_output[ $amount ] = '';
+		if( ! isset( $rows_output[ $row->amount ] ) ){
+			$rows_output[ $row->amount ] = '';
 		}
 
 		// Usually we hide rows with 0 entries, but we want to show rows with drafts or pending even
@@ -160,9 +130,9 @@ trait Display {
 			</tr>
 			',
 			[
-				'{class}'  => esc_attr( $args['class'] ),
-				'{number}' => number_format_i18n( $amount ),
-				'{anchor}' => sprintf( '<a href="%s">%s</a>', $link, $anchor ),
+				'{class}'  => esc_attr( $row->class ),
+				'{number}' => number_format_i18n( $row->amount ),
+				'{anchor}' => sprintf( '<a href="%s">%s</a>', esc_attr( $row->link ), esc_html( $row->amount_text ) ),
 				'{extra}'  => $extra_td,
 			]
 		);
@@ -174,22 +144,16 @@ trait Display {
 		$extra_links = [];
 
 		foreach( $extra as $item ){
-			$item += [
-				'link'        => '',
-				'amount'      => 0,
-				'amount_text' => '',
-				'class'       => '',
-			];
 
-			if( ! $item['amount'] ){
+			if( ! $item->amount ){
 				continue;
 			}
 
 			$link = strtr( '<span class="kgdw-number">{amount}</span> <a class="kgdw-td-extra-link {css_class}" href="{url}">{anchor}</a>', [
-				'{css_class}' => "kgdw-td-extra-link--{$item['class']}",
-				'{url}'       => $item['link'],
-				'{amount}'    => number_format_i18n( $item['amount'] ),
-				'{anchor}'    => $item['amount_text'],
+				'{css_class}' => "kgdw-td-extra-link--$item->class",
+				'{url}'       => esc_attr( $item->link ),
+				'{amount}'    => number_format_i18n( $item->amount ),
+				'{anchor}'    => esc_html( $item->amount_text ),
 			] );
 
 			$extra_links[] = $link;

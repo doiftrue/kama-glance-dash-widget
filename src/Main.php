@@ -14,10 +14,6 @@ class Main {
 	}
 
 	public function init() {
-		if( defined( 'DOING_AJAX' ) || ! is_admin() ){
-			return;
-		}
-
 		load_plugin_textdomain( 'kgdw', false, 'kama-glance-dash-widget/languages' );
 		add_action( 'load-index.php', [ $this, 'dashboard_init' ] );
 	}
