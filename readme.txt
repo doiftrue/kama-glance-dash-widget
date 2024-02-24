@@ -1,10 +1,10 @@
 === Kama Glance Dashboard Widget ===
 Contributors: Tkama
 Donate link: http://wp-kama.com
-Tags: At a Glance, Right Now, Dashboard, Dashboard widget, widget, widgets, admin, backend, stats, info, statistics, information
+Tags: At a Glance, Right Now, Dashboard, widgets, info
 Requires at least: 3.4
 Tested up to: 6.4.3
-Stable tag: trunk
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

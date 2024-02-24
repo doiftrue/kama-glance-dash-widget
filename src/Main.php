@@ -29,7 +29,7 @@ class Main {
 	}
 
 	public function enqueue_style() {
-		wp_enqueue_style( 'kama-glance-dash-widget', plugins_url( 'assets/styles.css', $this->main_file_path ) );
+		wp_enqueue_style( 'kama-glance-dash-widget', plugins_url( 'assets/styles.css', $this->main_file_path ), [], '1.3' );
 	}
 
 	public function replace_widget() {

@@ -37,7 +37,7 @@ trait Display {
 			if ( $actions ) {
 				?>
 				<div class="sub">
-					<?= $actions // phpcs:ignore ?>
+					<?php echo $actions // phpcs:ignore ?>
 				</div>
 				<?php
 			}
@@ -62,7 +62,7 @@ trait Display {
 			$content = apply_filters( 'privacy_on_link_text', __( 'Search engine visibility is OFF', 'kgdw' ) );
 			?>
 			<p class="search-engines-info">
-				<a href='options-reading.php' title="<?= esc_attr( $title ) ?>"><?= esc_html( $content ) ?></a>
+				<a href='options-reading.php' title="<?php echo esc_attr( $title ) ?>"><?php echo esc_html( $content ) ?></a>
 			</p>
 			<?php
 		}
@@ -86,11 +86,11 @@ trait Display {
 
 		?>
 		<div class="kgdwidget__block-section">
-			<h5><?= esc_html( $section_title ) ?></h5>
+			<h5><?php echo esc_html( $section_title ) ?></h5>
 			<table>
 				<?php
 				foreach( $rows_output as $row ){
-					echo $row;
+					echo $row; // phpcs:ignore
 				}
 				do_action( 'kama_glance_dash_widget__table_end', $rows_output, $section_type );
 				?>
