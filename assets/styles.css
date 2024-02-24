@@ -1,0 +1,51 @@
+
+#kgdwidget .inside {
+	margin: 0;
+	padding: 1em 1.5em;
+}
+
+#kgdwidget p {
+	padding: 0;
+	margin-top: 0
+}
+
+#kgdwidget h5{
+	border-bottom: 1px solid #efefef;
+	padding: 0 0 .2em;
+	margin: .5em 0 .5em;
+	color: #777;
+	font-size: 13px;
+	font-weight: normal;
+}
+
+#kgdwidget td{
+	padding: .2em 0;
+}
+
+#kgdwidget .kgdw-number{
+	color: #777;
+}
+
+#kgdwidget td.kgdw-td-number{
+	height: 1.5em;
+	padding-right: .5em;
+	text-align: right;
+	vertical-align: baseline;
+}
+
+#kgdwidget td.kgdw-td-extra{
+	padding-right: 0;
+	padding-left: 1em;
+	white-space: nowrap;
+}
+
+#kgdwidget .kgdw-td-extra a{
+	margin-right: 1em;
+}
+
+#kgdwidget .search-engines-info{
+	color: chocolate;
+}
+#kgdwidget .search-engines-info a{
+	color: inherit;
+}
