@@ -2,10 +2,15 @@
 /**
  * Plugin Name: Kama Glance Dashboard Widget
  * Description: A better version of the "At a Glance" dashboard widget. Shows all registered post type, comments, etc. Has no settings and works in admin only.
- * Version: 1.2
+ *
  * Author: Kama
  * Author URI: http://wp-kama.com
+ *
+ * Text Domain: kgdw
+ * Domain Path: languages
  * License: GPLv3
+ *
+ * Version: 1.2
  */
 
 namespace KamaGlanceDashboardWidget;

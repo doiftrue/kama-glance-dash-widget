@@ -18,9 +18,15 @@ Key Features:
 * Easily customizable using WP hooks.
 * Preserves default WP widget hooks, enabling seamless integration with other plugins.
 
+
 Screenshots
 -----------
 
 Before | After
 ---    | ---
 ![](screenshots/before.png) | ![](screenshots/after.png)
+
+
+Download
+--------
+Latest stable version with WP apdater included: https://api.wp-kama.ru/upserver/download/kama-glance-dash-widget
