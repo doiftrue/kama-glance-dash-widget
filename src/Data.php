@@ -24,9 +24,21 @@ trait Data {
 
 	/** @return Section_Row[] */
 	private function get_content_section_data(): array {
+		$data = [];
 
-		// posts
+		$this->fill_content_section_posts( $data );
+		$this->fill_content_section_comments( $data );
+
+		/**
+		 * Allows to modify the data for "Content" widget block.
+		 */
+		return apply_filters( 'kama_glance_dash_widget__content_data', $data );
+	}
+
+	private function fill_content_section_posts( array & $data ) {
+
 		$post_types = get_post_types( [ 'public' => true ], 'objects' );
+
 		foreach( $post_types as $ptype ){
 			$pcounts = wp_count_posts( $ptype->name );
 
@@ -53,30 +65,28 @@ trait Data {
 				],
 			] );
 		}
+	}
 
-		// comments
-		$ccounts = wp_count_comments();
+	private function fill_content_section_comments( array & $data ) {
+
+		$comm_counts = wp_count_comments();
+
 		$data['comments'] = new Section_Row( [
 			'class'       => 'comment',
 			'cap'         => 'moderate_comments',
 			'link'        => 'edit-comments.php',
-			'amount'      => $amount = ( $ccounts->approved ?? 0 ),
+			'amount'      => $amount = ( $comm_counts->approved ?? 0 ),
 			'amount_text' => _n( 'Comment', 'Comments', $amount, 'kgdw' ),
 			/** @see Display::extra_td() */
 			'extra'       => [
 				[
 					'link'        => "edit-comments.php?comment_status=moderated",
-					'amount'      => $amount = ( $ccounts->moderated ?? 0 ),
+					'amount'      => $amount = ( $comm_counts->moderated ?? 0 ),
 					'amount_text' => _n( 'pending', 'pending', $amount, 'kgdw' ),
 					'class'       => 'pending',
 				],
 			],
 		] );
-
-		/**
-		 * Allows to modify the data for "Content" widget block.
-		 */
-		return apply_filters( 'kama_glance_dash_widget__content_data', $data );
 	}
 
 	/** @return Section_Row[] */

@@ -19,34 +19,37 @@ trait Display {
 
 		do_action( 'kama_glance_dash_widget__before_show_blocks' );
 		?>
+		<div class="main">
 
-		<div id="kgdwidget__block kgdwidget__block-info"><?php $this->echo_section( 'info' ); ?></div>
-		<div id="kgdwidget__block kgdwidget__block-content"><?php $this->echo_section( 'content' ); ?></div>
-		<div id="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_section( 'taxonomies' ); ?></div>
+			<div id="kgdwidget__block kgdwidget__block-info"><?php $this->echo_section( 'info' ); ?></div>
+			<div id="kgdwidget__block kgdwidget__block-content"><?php $this->echo_section( 'content' ); ?></div>
+			<div id="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_section( 'taxonomies' ); ?></div>
 
-		<div id="dashboard_right_now">
-			<?php
-			ob_start();
-			// Preserve WP actions hooked
-			/** This action is documented in wp-admin/includes/dashboard.php */
-			do_action( 'rightnow_end' );
-			/** This action is documented in wp-admin/includes/dashboard.php */
-			do_action( 'activity_box_end' );
-			$actions = ob_get_clean();
-
-			if ( $actions ) {
-				?>
-				<div class="sub">
-					<?php echo $actions // phpcs:ignore ?>
-				</div>
+			<div id="dashboard_right_now">
 				<?php
-			}
-			?>
+				ob_start();
+				// Preserve WP actions hooked
+				/** This action is documented in wp-admin/includes/dashboard.php */
+				do_action( 'rightnow_end' );
+				/** This action is documented in wp-admin/includes/dashboard.php */
+				do_action( 'activity_box_end' );
+				$actions = ob_get_clean();
+
+				if ( $actions ) {
+					?>
+					<div class="sub">
+						<?php echo $actions // phpcs:ignore ?>
+					</div>
+					<?php
+				}
+				?>
+			</div>
 		</div>
 		<?php
 	}
 
 	/**
+	 * This part taken from WP core.
 	 * @see wp_dashboard_right_now()
 	 */
 	private function echo_search_engines_discourage() {
@@ -121,14 +124,15 @@ trait Display {
 			$rows_output[ -1 ] = '';
 		}
 
-		$rows_output[ $rows_index ] .= strtr(
-			'
+		$html = <<<'HTML'
 			<tr class="kgdwidget__tr kgdwidget__tr-{class}">
 				<td class="kgdw-td-number kgdw-number">{number}</td>
 				<td class="kgdw-td-label">{anchor}</td>
 				<td class="kgdw-td-extra">{extra}</td>
 			</tr>
-			',
+HTML;
+
+		$rows_output[ $rows_index ] .= strtr( $html,
 			[
 				'{class}'  => esc_attr( $row->class ),
 				'{number}' => number_format_i18n( $row->amount ),
@@ -149,7 +153,11 @@ trait Display {
 				continue;
 			}
 
-			$link = strtr( '<span class="kgdw-number">{amount}</span> <a class="kgdw-td-extra-link {css_class}" href="{url}">{anchor}</a>', [
+			$link_html = <<<'HTML'
+			<span class="kgdw-number">{amount}</span> <a class="kgdw-td-extra-link {css_class}" href="{url}">{anchor}</a>
+HTML;
+
+			$link = strtr( $link_html, [
 				'{css_class}' => "kgdw-td-extra-link--$item->class",
 				'{url}'       => esc_attr( $item->link ),
 				'{amount}'    => number_format_i18n( $item->amount ),

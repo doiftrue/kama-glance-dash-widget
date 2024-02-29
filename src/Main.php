@@ -14,7 +14,7 @@ class Main {
 	}
 
 	public function init() {
-		load_plugin_textdomain( 'kgdw', false, 'kama-glance-dash-widget/languages' );
+		load_plugin_textdomain( 'kgdw', false, basename( dirname( $this->main_file_path ) ) . '/languages' );
 		add_action( 'load-index.php', [ $this, 'dashboard_init' ] );
 	}
 
