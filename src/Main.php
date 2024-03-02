@@ -10,7 +10,7 @@ class Main {
 	private $main_file_path;
 
 	public function __construct( string $main_file ){
-	    $this->main_file_path = $main_file;
+		$this->main_file_path = $main_file;
 	}
 
 	public function init() {
@@ -20,31 +20,38 @@ class Main {
 
 	public function dashboard_init() {
 
-		if( ! current_user_can( 'edit_posts' ) ){
-			return;
+		// regular site dashboard
+		if( current_user_can( 'edit_posts' ) ){
+			add_action( 'admin_print_styles', [ $this, 'enqueue_style' ] );
+			add_action( 'wp_dashboard_setup', [ $this, 'replace_widget' ] );
 		}
 
-		add_action( 'admin_print_styles', [ $this, 'enqueue_style' ] );
-		add_action( 'wp_dashboard_setup', [ $this, 'replace_widget' ] );
+		// multisite site dashboard
+		if( is_multisite() ){
+			// TODO: replace network widget: on hook `wp_network_dashboard_setup`
+		}
 	}
 
 	public function enqueue_style() {
-		wp_enqueue_style( 'kama-glance-dash-widget', plugins_url( 'assets/styles.css', $this->main_file_path ), [], '1.3.1' );
+		wp_enqueue_style( 'kama-glance-dash-widget', plugins_url( 'assets/styles.css', $this->main_file_path ), [], '1.3.2' );
 	}
 
 	public function replace_widget() {
 		global $wp_meta_boxes;
 
-		$core = & $wp_meta_boxes['dashboard']['normal']['core'];
+		$wp_widget_key = 'dashboard_right_now';
 
-		unset( $core['dashboard_right_now'] ); // remove wp widget
+		$core = &$wp_meta_boxes['dashboard']['normal']['core'];
+		$wp_widget = $core[ $wp_widget_key ];
 
-		wp_add_dashboard_widget( 'kgdwidget', 'At a Glance', [ $this, 'display' ] );
+		// place wp widget
+		unset( $core[ $wp_widget_key ] ); // remove
 
-		// place to top
-		$save = $core['kgdwidget'];
-		unset( $core['kgdwidget'] );
-		$core = array_merge( [ 'kgdwidget' => $save ], $core );
+		wp_add_dashboard_widget( $wp_widget_key, $wp_widget['title'], [ $this, 'display' ] );
+
+		$save = $core[ $wp_widget_key ];
+		unset( $core[ $wp_widget_key ] );
+		$core = array_merge( [ $wp_widget_key => $save ], $core );
 	}
 
 }

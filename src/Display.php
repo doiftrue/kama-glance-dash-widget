@@ -8,44 +8,41 @@ trait Display {
 	 * @see wp_dashboard_right_now()
 	 */
 	public function display() {
-
-		update_right_now_message();
-
-		$this->echo_search_engines_discourage();
-
-		//if( current_user_can( 'view_site_health_checks' ) ){
-		//	echo sprintf( '<p class="kgdwidget__site-health">'. __( 'Check:', '' ) . ' ' . '<a href="%s">%s</a></p>', admin_url('site-health.php') , __( 'Site Health', 'kgdw' ) );
-		//}
-
-		do_action( 'kama_glance_dash_widget__before_show_blocks' );
 		?>
 		<div class="main">
+			<?php
+			update_right_now_message();
 
-			<div id="kgdwidget__block kgdwidget__block-info"><?php $this->echo_section( 'info' ); ?></div>
-			<div id="kgdwidget__block kgdwidget__block-content"><?php $this->echo_section( 'content' ); ?></div>
-			<div id="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_section( 'taxonomies' ); ?></div>
+			$this->echo_search_engines_discourage();
 
-			<div id="dashboard_right_now">
-				<?php
-				ob_start();
-				// Preserve WP actions hooked
-				/** This action is documented in wp-admin/includes/dashboard.php */
-				do_action( 'rightnow_end' );
-				/** This action is documented in wp-admin/includes/dashboard.php */
-				do_action( 'activity_box_end' );
-				$actions = ob_get_clean();
+			//if( current_user_can( 'view_site_health_checks' ) ){
+			//	echo sprintf( '<p class="kgdwidget__site-health">'. __( 'Check:', '' ) . ' ' . '<a href="%s">%s</a></p>', admin_url('site-health.php') , __( 'Site Health', 'kgdw' ) );
+			//}
 
-				if ( $actions ) {
-					?>
-					<div class="sub">
-						<?php echo $actions // phpcs:ignore ?>
-					</div>
-					<?php
-				}
-				?>
-			</div>
+			do_action( 'kama_glance_dash_widget__before_show_blocks' );
+			?>
+
+			<div class="kgdwidget__block kgdwidget__block-info"><?php $this->echo_section( 'info' ); ?></div>
+			<div class="kgdwidget__block kgdwidget__block-content"><?php $this->echo_section( 'content' ); ?></div>
+			<div class="kgdwidget__block kgdwidget__block-taxonomies"><?php $this->echo_section( 'taxonomies' ); ?></div>
 		</div>
+
 		<?php
+		// Preserve WP hooks
+		ob_start();
+		/** This action is documented in wp-admin/includes/dashboard.php */
+		do_action( 'rightnow_end' );
+		/** This action is documented in wp-admin/includes/dashboard.php */
+		do_action( 'activity_box_end' );
+		$actions = ob_get_clean();
+
+		if ( $actions ) {
+			?>
+			<div class="sub">
+				<?php echo $actions // phpcs:ignore ?>
+			</div>
+			<?php
+		}
 	}
 
 	/**
@@ -75,54 +72,43 @@ trait Display {
 
 		list( $section_data, $section_title ) = $this->get_section_data( $section_type );
 
-		$rows_output = [];
-		foreach( $section_data as $row ){
-			$rows_output = $this->row( $row, $rows_output );
-		}
+		// sort bigger amount to top
+		uasort( $section_data, static function( $a, $b ){
+			return $b->amount <=> $a->amount;
+		} );
 
-		if( isset( $rows_output[0] ) ){
-			unset( $rows_output[0] );
+		$collected_rows = [];
+		foreach( $section_data as $row_data ){
+			$this->add_row( $row_data, $collected_rows );
 		}
-
-		ksort( $rows_output );
-		$rows_output = array_reverse( $rows_output, true );
 
 		?>
 		<div class="kgdwidget__block-section">
 			<h5><?php echo esc_html( $section_title ) ?></h5>
 			<table>
 				<?php
-				foreach( $rows_output as $row ){
+				foreach( $collected_rows as $row ){
 					echo $row; // phpcs:ignore
 				}
-				do_action( 'kama_glance_dash_widget__table_end', $rows_output, $section_type );
+				do_action( 'kama_glance_dash_widget__table_end', $collected_rows, $section_type );
 				?>
 			</table>
 		</div>
 		<?php
 	}
 
-	private function row( Section_Row $row, array $rows_output ): array {
+	private function add_row( Section_Row $row, array & $collected_rows ) {
 
 		if( ! current_user_can( $row->cap ) ){
-			return [];
+			return;
+		}
+
+		if( $this->is_skip_row( $row ) ){
+			return;
 		}
 
 		$extra_td = $row->extra ? $this->extra_td( $row->extra ) : '';
-		$rows_index = $row->amount;
-		if( $extra_td && ! $rows_index ){
-			$rows_index = uniqid( '', true );
-		}
-
-		if( ! isset( $rows_output[ $row->amount ] ) ){
-			$rows_output[ $row->amount ] = '';
-		}
-
-		// Usually we hide rows with 0 entries, but we want to show rows with drafts or pending even
-		// if they have 0 published - sticking these cases in $rows_output[-1] solves this
-		if( ! isset( $rows_output[ -1 ] ) ){
-			$rows_output[ -1 ] = '';
-		}
+		$collected_rows[] = '';
 
 		$html = <<<'HTML'
 			<tr class="kgdwidget__tr kgdwidget__tr-{class}">
@@ -132,7 +118,7 @@ trait Display {
 			</tr>
 HTML;
 
-		$rows_output[ $rows_index ] .= strtr( $html,
+		$collected_rows[] .= strtr( $html,
 			[
 				'{class}'  => esc_attr( $row->class ),
 				'{number}' => number_format_i18n( $row->amount ),
@@ -141,7 +127,6 @@ HTML;
 			]
 		);
 
-		return $rows_output;
 	}
 
 	private function extra_td( array $extra ): string {
@@ -168,6 +153,29 @@ HTML;
 		}
 
 		return implode( ' ', $extra_links );
+	}
+
+	/**
+	 * Checks maybe hide row element if it's empty.
+	 */
+	private function is_skip_row( Section_Row $row ): bool {
+		$skip = false;
+
+		if( ! $row->amount ){
+			$skip = true;
+
+			// Don't hide if there is extra data. For example no published posts, but drafts exists.
+			if( $row->extra ){
+				foreach( $row->extra as $extra ){
+					if( $extra->amount ) {
+						$skip = false;
+						break;
+					}
+				}
+			}
+		}
+
+		return $skip;
 	}
 
 }

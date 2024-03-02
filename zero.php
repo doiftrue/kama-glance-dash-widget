@@ -10,26 +10,28 @@
  * Domain Path: languages
  * License: GPLv3
  *
- * Version: 1.3.1
+ * Version: 1.3.2
  */
 
 namespace KamaGlanceDashboardWidget;
 
-global $pagenow;
-
-// This plugin works in admin only on `index.php` (dashboard) page
-if( 'index.php' !== $pagenow || defined( 'DOING_AJAX' ) || defined( 'WP_CLI' ) || ! is_admin() ){
-	return;
-}
-
-require_once __DIR__ . '/src/Display.php';
-require_once __DIR__ . '/src/Data.php';
-require_once __DIR__ . '/src/Main.php';
-require_once __DIR__ . '/src/Section_Row.php';
-
 add_action( 'plugins_loaded', __NAMESPACE__ . '\init' );
 
 function init(){
+	global $pagenow;
+
+	$is_dashboard_page = ( 'index.php' === $pagenow && is_admin() );
+
+	// This plugin works on admin dashboard page only
+	if( ! $is_dashboard_page || defined( 'DOING_AJAX' ) || defined( 'WP_CLI' ) ){
+		return;
+	}
+
+	require_once __DIR__ . '/src/Display.php';
+	require_once __DIR__ . '/src/Data.php';
+	require_once __DIR__ . '/src/Main.php';
+	require_once __DIR__ . '/src/Section_Row.php';
+
 	$main = new Main( __FILE__ );
 	$main->init();
 }

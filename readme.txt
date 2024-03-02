@@ -4,7 +4,7 @@ Donate link: http://wp-kama.com
 Tags: At a Glance, Right Now, Dashboard, widgets, info
 Requires at least: 3.4
 Tested up to: 6.4.3
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,25 @@ Key Features:
 
 == Changelog ==
 
-= 1.0 =
+= 1.3.2 =
+FIX: Styles. Native widget hooks. HTML to be adaptive to native widget.
+FIX: Sometimes not all data were shown because of array key bug.
+FIX: The widget not worked for Multisite.
+NEW: Two hooks added.
+CHG: Not all `show_ui` post types are shown, not only `public`. It's more descriptive.
+
+= 1.3.1 =
+FIX: Fatal Error around not defined `$widget_amount` variable.
+IMP: Minor improvements.
+
+= 1.3 =
+FIX: WP.org repo publish fixes
+IMP: "Text Domain" added to plugins headers and README.md.
+
+= 1.2 =
+IMP: Section_Row class added.
+NEW: README.md and screenshots added.
+
+= 1.1 =
 * Initial release.
 

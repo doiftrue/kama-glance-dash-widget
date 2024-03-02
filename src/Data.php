@@ -37,7 +37,17 @@ trait Data {
 
 	private function fill_content_section_posts( array & $data ) {
 
-		$post_types = get_post_types( [ 'public' => true ], 'objects' );
+		/**
+		 * Allows to modify get_post_types() function $args.
+		 */
+		$args = apply_filters( 'kama_glance_dash_widget__processed_post_types_args', [ 'show_ui' => true ] );
+
+		$post_types = get_post_types( $args, 'objects' );
+
+		/**
+		 * Allows to modify post types that processed after it retvieved.
+		 */
+		$post_types = apply_filters( 'kama_glance_dash_widget__processed_post_types', $post_types );
 
 		foreach( $post_types as $ptype ){
 			$pcounts = wp_count_posts( $ptype->name );
