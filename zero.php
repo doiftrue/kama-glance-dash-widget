@@ -10,7 +10,7 @@
  * Domain Path: languages
  * License: GPLv3
  *
- * Version: 1.3
+ * Version: 1.3.1
  */
 
 namespace KamaGlanceDashboardWidget;

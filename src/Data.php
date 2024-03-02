@@ -180,9 +180,10 @@ trait Data {
 
 	private function count_widgets(): int {
 		global $wp_registered_sidebars;
-		if( ! empty( $wp_registered_sidebars ) ){
+		$widget_amount = 0;
+
+		if( $wp_registered_sidebars ){
 			$sidebars_widgets = wp_get_sidebars_widgets();
-			$widget_amount = 0;
 			foreach( $sidebars_widgets as $key => $value ){
 				if( 'wp_inactive_widgets' === $key ){
 					continue;
